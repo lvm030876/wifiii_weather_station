@@ -1,5 +1,5 @@
 #include "config.h"
-ADC_MODE(ADC_VCC); //use getVcc
+ADC_MODE(ADC_VCC); //use getVcc ss
 
 
 Adafruit_BME280 bme;
