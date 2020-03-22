@@ -2,7 +2,7 @@
 #include "eepromclass.h"
 
 void EepromClass::eeprom_init() {
-	EEPROM.begin(512);
+	EEPROM.begin(128);
 	eeprom_load();
 	if (_customVar.start != 0xaa55) {
 		_customVar.start = 0xaa55;

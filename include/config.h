@@ -51,6 +51,4 @@ int nmTick = 0, timeSensor = 0;
 int timeNarod = 5;
 bool bmeStatus = false, lightStatus = false, onSensor = false, onNarod = false;
 
-const char* upgradeIndex = R"=====(<form method='POST' action='/update' enctype='multipart/form-data'><input type='file' name='update'><input type='submit' value='Update'></form>)=====";
-
 #endif

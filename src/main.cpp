@@ -103,35 +103,6 @@ void startServer() {
     HTTP.on("/ip.htm", HTTP_GET, [](){HTTP.send(200, "text/html", ipIndex);});
 	HTTP.on("/mem", HTTP_GET, mem_set);
 	HTTP.on("/default", HTTP_GET, smart_res);
-    HTTP.on("/upgrade", HTTP_GET, [](){HTTP.send(200, "text/html", upgradeIndex);});
-    HTTP.on("/update", HTTP_POST, [](){
-		HTTP.send(200, "text/plain", (Update.hasError())?"FAIL":"OK");
-		delay(5000);
-		ESP.restart();
-		delay(500);
-    },[](){
-		HTTPUpload& upload = HTTP.upload();
-		if(upload.status == UPLOAD_FILE_START){
-			debugSerial.setDebugOutput(true);
-			debugSerial.printf("Update: %s\n", upload.filename.c_str());
-			uint32_t maxSketchSpace = (ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000;
-			if(!Update.begin(maxSketchSpace)){
-				Update.printError(debugSerial);
-			}
-		} else if(upload.status == UPLOAD_FILE_WRITE){
-			if(Update.write(upload.buf, upload.currentSize) != upload.currentSize){
-				Update.printError(debugSerial);
-			}
-		} else if(upload.status == UPLOAD_FILE_END){
-			if(Update.end(true)){
-				debugSerial.printf("Update Success: %u\nRebooting...\n", upload.totalSize);
-			} else {
-				Update.printError(debugSerial);
-			}
-			debugSerial.setDebugOutput(false);
-		}
-		yield();
-    });
 	HTTP.begin();
 	debugSerial.println("http server started");
 }
