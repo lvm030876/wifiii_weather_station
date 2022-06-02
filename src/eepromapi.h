@@ -1,10 +1,34 @@
-#include "Arduino.h"
-#include "eepromclass.h"
+#include "EEPROM.h"
+#include <ESP8266WiFi.h>
+
+struct IOTconfig{
+	int wifimode;
+	char STA_ssid[32];
+	char STA_pass[32];
+	int dhc;
+	IPAddress statIp;
+	int timeNarod;
+	int start;
+};
+
+class EepromClass {
+	public:
+		void eeprom_init();
+		void eeprom_clr();
+		void eeprom_set(IOTconfig &obj);
+		IOTconfig eeprom_get();
+	private:
+		IOTconfig _customVar;
+		int _len = sizeof(_customVar);
+		void eeprom_save();
+		void eeprom_load();
+};
 
 void EepromClass::eeprom_init() {
 	EEPROM.begin(512);
 	eeprom_load();
 	if (_customVar.start != 0xaa55) {
+		_customVar.wifimode = 0;
 		_customVar.start = 0xaa55;
 		eeprom_save();
 	}
