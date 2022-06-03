@@ -14,9 +14,9 @@
 #include "STYLECSS.h"
 #include "HELPHTM.h"
 
-#define LED_PIN 2
+#define LED_PIN	2
 #define RESET_PIN 0
-#define SLEEP_PIN 13 // нужно определится
+#define SLEEP_PIN 13
 // D1 en D2, (GPIO5 and GPIO4)  are SCL resp SDA  and used by the BME280
 //#define FORCE_DEEPSLEEP //comment out when you like to use battery level dependent sleep
 #define debugSerial Serial
@@ -52,47 +52,6 @@ void mem_set();
 void narodmonSend();
 void sensor_xml();
 void read_sensor();
-void hold(const unsigned int &ms);
-
-void scani2c(){
-  byte error, address; //variable for error and I2C address
-  int nDevices;
-
-  debugSerial.println("Scanning...");
-
-  nDevices = 0;
-  for (address = 1; address < 127; address++ )
-  {
-    // The i2c_scanner uses the return value of
-    // the Write.endTransmisstion to see if
-    // a device did acknowledge to the address.
-    Wire.beginTransmission(address);
-    error = Wire.endTransmission();
-
-    if (error == 0)
-    {
-      debugSerial.print("I2C device found at address 0x");
-      if (address < 16)
-        debugSerial.print("0");
-      debugSerial.print(address, HEX);
-      debugSerial.println("  !");
-      nDevices++;
-    }
-    else if (error == 4)
-    {
-      debugSerial.print("Unknown error at address 0x");
-      if (address < 16)
-        debugSerial.print("0");
-      debugSerial.println(address, HEX);
-    }
-  }
-  if (nDevices == 0)
-    debugSerial.println("No I2C devices found\n");
-  else
-    debugSerial.println("done\n");
-
-  hold(5000); // wait 5 seconds for the next I2C scan
-}
 
 void hold(const unsigned int &ms) {
 	unsigned long m = millis();
@@ -180,9 +139,6 @@ void setup() {
 	pinMode(RESET_PIN, INPUT_PULLUP);
 	Wire.begin(5, 4);
 	eepromapi.eeprom_init();
-
-// scani2c();
-
 	bmeStatus = bme.begin(0x76); //bme.begin(address)  0x76 or 0x77
 	if (!bmeStatus) debugSerial.println("no BME280 detected");
 	if (bmeStatus) {

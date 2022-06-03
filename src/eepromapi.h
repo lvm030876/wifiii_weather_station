@@ -29,6 +29,7 @@ void EepromClass::eeprom_init() {
 	eeprom_load();
 	if (_customVar.start != 0xaa55) {
 		_customVar.wifimode = 0;
+		_customVar.timeNarod = 10;
 		_customVar.start = 0xaa55;
 		eeprom_save();
 	}
