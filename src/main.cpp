@@ -16,9 +16,9 @@
 
 #define LED_PIN	2
 #define RESET_PIN 0
-#define SLEEP_PIN 13
 // D1 en D2, (GPIO5 and GPIO4)  are SCL resp SDA  and used by the BME280
-//#define FORCE_DEEPSLEEP //comment out when you like to use battery level dependent sleep
+// #define FORCE_DEEPSLEEP //comment out when you like to use battery level dependent sleep
+#define SLEEP_PIN 13
 #define debugSerial Serial
 
 struct SensorVol{
@@ -158,18 +158,22 @@ void setup() {
 	if (customVar.wifimode == 0) AP_mode_default();
 	else STATION_mode(customVar);
 	timeNarod = customVar.timeNarod;
-	if (digitalRead(SLEEP_PIN) == 0) {
-		read_sensor();
-		narodmonSend();
-		int tt = (timeNarod != 0)?timeNarod:5;
-		debugSerial.println("Засыпаем на " + String(tt) + " минут");
-		ESP.deepSleep(tt * 60000000);          // спать на 5 минут пины D16 и  RST должны быть соеденены между собой
-	}
+	#ifdef FORCE_DEEPSLEEP
+		if (digitalRead(SLEEP_PIN) == 0) {
+			read_sensor();
+			narodmonSend();
+			int tt = (timeNarod != 0)?timeNarod:5;
+			debugSerial.println("Засыпаем на " + String(tt) + " минут");
+			ESP.deepSleep(tt * 60000000);          // спать на 5 минут пины D16 и  RST должны быть соеденены между собой
+		}
+	#endif
 	startServer();
 }
 
 void loop() {
-	if (digitalRead(SLEEP_PIN) == 0) ESP.reset();
+	#ifdef FORCE_DEEPSLEEP
+		if (digitalRead(SLEEP_PIN) == 0) ESP.reset();
+	#endif
 	if (onSensor) read_sensor();
 	if (onNarod) narodmonSend();
 	HTTP.handleClient();
